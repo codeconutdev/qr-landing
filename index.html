@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QRForge — Premium Custom QR Codes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { -webkit-font-smoothing: antialiased; }
+    body { font-family: 'Inter', sans-serif; background: #FAFAF9; color: #1C1917; }
+    .serif { font-family: 'Cormorant Garamond', serif; }
+    .dots { background-image: radial-gradient(rgba(28,25,23,.07) 1px, transparent 1px); background-size: 22px 22px; }
+
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    @keyframes sweep {
+      0%   { transform: translateY(-6px); opacity: 0; }
+      6%   { opacity: 1; }
+      94%  { opacity: 1; }
+      100% { transform: translateY(406px); opacity: 0; }
+    }
+    @keyframes sweepGlow {
+      0%   { transform: translateY(-22px); opacity: 0; }
+      6%   { opacity: .3; }
+      94%  { opacity: .3; }
+      100% { transform: translateY(390px); opacity: 0; }
+    }
+    .scan-beam { animation: sweep 2.4s ease-in-out infinite; }
+    .scan-glow { animation: sweepGlow 2.4s ease-in-out infinite; }
+
+    @keyframes pulseRing {
+      0%, 100% { opacity: .5; }
+      50%       { opacity: .08; }
+    }
+    .pulse-ring  { animation: pulseRing 2.6s ease-in-out infinite; }
+    .pulse-ring2 { animation: pulseRing 2.6s ease-in-out infinite .35s; }
+
+    @keyframes drawLine { from { stroke-dashoffset: 700; } to { stroke-dashoffset: 0; } }
+    .chart-line { stroke-dasharray: 700; stroke-dashoffset: 700; }
+    .chart-line.animate { animation: drawLine 1.8s ease forwards; }
+  </style>
+</head>
+<body class="overflow-x-hidden">
+
+<!-- NAV -->
+<nav class="fixed top-0 inset-x-0 z-50 bg-stone-50/90 backdrop-blur border-b border-stone-200">
+  <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <span class="serif text-2xl font-semibold tracking-tight">QRForge.</span>
+    <div class="hidden md:flex gap-8 text-sm text-stone-500">
+      <a href="#features"     class="hover:text-red-600 transition-colors">Features</a>
+      <a href="#how-it-works" class="hover:text-red-600 transition-colors">How it Works</a>
+      <a href="#pricing"      class="hover:text-red-600 transition-colors">Pricing</a>
+    </div>
+    <a href="#pricing" class="bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-5 py-2 rounded-full transition-colors">Get Started</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="relative min-h-screen flex items-center pt-16 dots overflow-hidden">
+  <div class="max-w-6xl mx-auto px-6 w-full grid lg:grid-cols-2 gap-12 lg:gap-20 items-center py-24">
+    <div class="reveal">
+      <h1 class="serif text-6xl lg:text-8xl font-semibold leading-none tracking-tight text-stone-900 mb-6">
+        Premium QR Codes<br><em class="italic text-red-600">That Stand Out.</em>
+      </h1>
+      <p class="text-stone-500 text-lg leading-relaxed max-w-md mb-10">
+        Custom-designed, trackable QR codes that match your brand. Change destinations anytime — no reprinting ever.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a href="#pricing" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-7 py-3.5 rounded-full font-medium transition-colors shadow-sm">
+          Create Your QR Code
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+        <a href="#showcase" class="inline-flex items-center gap-2 border border-stone-300 hover:border-stone-700 text-stone-700 px-7 py-3.5 rounded-full font-medium transition-colors">
+          See Examples
+        </a>
+      </div>
+    </div>
+
+    <div class="reveal flex items-center justify-center" style="transition-delay:.15s">
+      <div class="relative w-72 h-72 lg:w-80 lg:h-80">
+        <svg class="absolute -inset-8 w-[calc(100%+64px)] h-[calc(100%+64px)] pointer-events-none" viewBox="0 0 448 448">
+          <rect x="6"  y="6"  width="436" height="436" rx="28" fill="none" stroke="#DC2626" stroke-width="2"   class="pulse-ring"/>
+          <rect x="18" y="18" width="412" height="412" rx="22" fill="none" stroke="#DC2626" stroke-width="1.2" class="pulse-ring2"/>
+        </svg>
+        <img id="hero-qr" src="qr-sample.jpg" alt="Custom QR Code"
+             class="w-full h-full object-contain rounded-xl shadow-2xl relative z-10"
+             style="transition: opacity .3s ease, transform .3s ease;">
+        <svg class="absolute inset-0 w-full h-full z-20 rounded-xl overflow-hidden pointer-events-none" viewBox="0 0 400 400">
+          <defs>
+            <linearGradient id="beamGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stop-color="#DC2626" stop-opacity="0"/>
+              <stop offset="20%"  stop-color="#DC2626" stop-opacity="1"/>
+              <stop offset="80%"  stop-color="#DC2626" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#DC2626" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="glowGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#DC2626" stop-opacity=".4"/>
+              <stop offset="100%" stop-color="#DC2626" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <rect class="scan-glow" x="0" y="0" width="400" height="22" rx="4" fill="url(#glowGrad)"/>
+          <rect class="scan-beam" x="0" y="0" width="400" height="3"  rx="1.5" fill="url(#beamGrad)"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWCASE -->
+<section id="showcase" class="py-24 bg-white">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-14 reveal">
+      <h2 class="serif text-4xl lg:text-5xl font-semibold text-stone-900 mb-3">Designed to Be Noticed</h2>
+      <p class="text-stone-500 text-lg max-w-md mx-auto">Every QR code tells a story. Yours should too.</p>
+    </div>
+    <div class="reveal" style="transition-delay:.1s">
+      <div class="grid grid-cols-3 gap-5 mb-5">
+        <div class="bg-stone-50 rounded-2xl p-6 flex flex-col items-center gap-3 border border-stone-100 hover:border-red-200 hover:shadow-lg transition-all">
+          <img src="qr1.jpg" alt="QR Code" class="w-full max-w-[180px] rounded-lg">
+          <p class="text-xs text-stone-400 font-medium uppercase tracking-widest">Brand Campaign</p>
+        </div>
+        <div class="bg-stone-50 rounded-2xl p-6 flex flex-col items-center gap-3 border border-stone-100 hover:border-red-200 hover:shadow-lg transition-all">
+          <img src="qr2.jpg" alt="QR Code" class="w-full max-w-[180px] rounded-lg">
+          <p class="text-xs text-stone-400 font-medium uppercase tracking-widest">Event Promotion</p>
+        </div>
+        <div class="bg-stone-50 rounded-2xl p-6 flex flex-col items-center gap-3 border border-stone-100 hover:border-red-200 hover:shadow-lg transition-all">
+          <img src="qr3.jpg" alt="QR Code" class="w-full max-w-[180px] rounded-lg">
+          <p class="text-xs text-stone-400 font-medium uppercase tracking-widest">Personal Brand</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-5 max-w-2xl mx-auto">
+        <div class="bg-stone-50 rounded-2xl p-6 flex flex-col items-center gap-3 border border-stone-100 hover:border-red-200 hover:shadow-lg transition-all">
+          <img src="qr4.jpg" alt="QR Code" class="w-full max-w-[180px] rounded-lg">
+          <p class="text-xs text-stone-400 font-medium uppercase tracking-widest">Product Launch</p>
+        </div>
+        <div class="bg-stone-50 rounded-2xl p-6 flex flex-col items-center gap-3 border border-stone-100 hover:border-red-200 hover:shadow-lg transition-all">
+          <img src="qr5.jpg" alt="QR Code" class="w-full max-w-[180px] rounded-lg">
+          <p class="text-xs text-stone-400 font-medium uppercase tracking-widest">App Download</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="py-24 dots bg-stone-50">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-14 reveal">
+      <h2 class="serif text-4xl lg:text-5xl font-semibold text-stone-900 mb-3">Everything You Need</h2>
+      <p class="text-stone-500 text-lg max-w-md mx-auto">Professional tools without the enterprise complexity.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 reveal" style="transition-delay:.1s">
+      <div class="bg-white rounded-2xl p-7 border border-stone-100 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center mb-5">
+          <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </div>
+        <h3 class="serif text-xl font-semibold text-stone-900 mb-2">Dynamic QR Codes</h3>
+        <p class="text-stone-500 text-sm leading-relaxed">Update your destination URL anytime. One QR code, infinite possibilities — no reprinting required.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-7 border border-stone-100 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center mb-5">
+          <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+        <h3 class="serif text-xl font-semibold text-stone-900 mb-2">Scan Analytics</h3>
+        <p class="text-stone-500 text-sm leading-relaxed">Track every scan: total counts over time, unique visitors, geographic location, device type, and time of day.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-7 border border-stone-100 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center mb-5">
+          <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+        </div>
+        <h3 class="serif text-xl font-semibold text-stone-900 mb-2">Custom Design</h3>
+        <p class="text-stone-500 text-sm leading-relaxed">Round dots, custom colors, embedded logos. Fully branded QR codes that match your identity.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-7 border border-stone-100 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center mb-5">
+          <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        </div>
+        <h3 class="serif text-xl font-semibold text-stone-900 mb-2">High-Res Export</h3>
+        <p class="text-stone-500 text-sm leading-relaxed">Print-ready PNG, SVG, and PDF exports. Crystal clear at any size, from business cards to billboards.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-7 border border-stone-100 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center mb-5">
+          <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+        </div>
+        <h3 class="serif text-xl font-semibold text-stone-900 mb-2">Short Link Manager</h3>
+        <p class="text-stone-500 text-sm leading-relaxed">Built-in URL shortener. One link, unlimited redirects. Update destination without touching the QR.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-7 border border-stone-100 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center mb-5">
+          <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <h3 class="serif text-xl font-semibold text-stone-900 mb-2">Team Collaboration</h3>
+        <p class="text-stone-500 text-sm leading-relaxed">Share brand assets and QR campaigns across your team with role-based access and shared workspaces.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ANALYTICS PREVIEW -->
+<section class="py-24 bg-white">
+  <div class="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+    <div class="reveal">
+      <h2 class="serif text-4xl lg:text-5xl font-semibold text-stone-900 mb-5">Know Every Scan</h2>
+      <p class="text-stone-500 text-lg leading-relaxed mb-8">Real-time analytics on every scan — see when people scan, where they are, what device they use, and whether they're returning visitors.</p>
+      <ul class="space-y-3">
+        <li class="flex items-center gap-3 text-stone-600 text-sm"><span class="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0"></span>Scans over time — hourly, daily, weekly</li>
+        <li class="flex items-center gap-3 text-stone-600 text-sm"><span class="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0"></span>Unique vs. repeat visitors</li>
+        <li class="flex items-center gap-3 text-stone-600 text-sm"><span class="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0"></span>Device type — iOS, Android, desktop</li>
+        <li class="flex items-center gap-3 text-stone-600 text-sm"><span class="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0"></span>Geographic location by city and country</li>
+      </ul>
+    </div>
+    <div class="reveal bg-stone-50 rounded-2xl border border-stone-100 p-8 shadow-sm" style="transition-delay:.15s" id="chart-card">
+      <div class="flex items-center justify-between mb-6">
+        <p class="text-sm font-medium text-stone-700">Scans — last 30 days</p>
+        <span class="text-xs text-stone-400 bg-stone-100 px-2 py-1 rounded-full">↑ trending up</span>
+      </div>
+      <svg class="w-full" height="150" viewBox="0 0 400 150" xmlns="http://www.w3.org/2000/svg">
+        <line x1="0" y1="37"  x2="400" y2="37"  stroke="#e7e5e4" stroke-width="1"/>
+        <line x1="0" y1="75"  x2="400" y2="75"  stroke="#e7e5e4" stroke-width="1"/>
+        <line x1="0" y1="113" x2="400" y2="113" stroke="#e7e5e4" stroke-width="1"/>
+        <path d="M0,125 C40,115 60,88 90,80 C120,72 140,95 170,65 C200,35 220,48 250,30 C280,14 300,38 330,22 C360,8 380,18 400,12 L400,150 L0,150 Z"
+              fill="url(#areaGrad)" opacity=".3"/>
+        <path id="chartPath"
+              d="M0,125 C40,115 60,88 90,80 C120,72 140,95 170,65 C200,35 220,48 250,30 C280,14 300,38 330,22 C360,8 380,18 400,12"
+              fill="none" stroke="#DC2626" stroke-width="2.5" stroke-linecap="round" class="chart-line"/>
+        <circle cx="90"  cy="80" r="3.5" fill="#DC2626"/>
+        <circle cx="170" cy="65" r="3.5" fill="#DC2626"/>
+        <circle cx="250" cy="30" r="3.5" fill="#DC2626"/>
+        <circle cx="330" cy="22" r="3.5" fill="#DC2626"/>
+        <circle cx="400" cy="12" r="5"   fill="#DC2626" stroke="white" stroke-width="2"/>
+        <defs>
+          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#DC2626"/>
+            <stop offset="100%" stop-color="#DC2626" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="flex justify-between mt-3 text-xs text-stone-400">
+        <span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Week 4</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works" class="py-24 dots bg-stone-50">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-14 reveal">
+      <h2 class="serif text-4xl lg:text-5xl font-semibold text-stone-900 mb-3">Three Steps to Standout</h2>
+    </div>
+    <div class="grid sm:grid-cols-3 gap-10 reveal" style="transition-delay:.1s">
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-full border-2 border-red-600 text-red-600 serif text-xl font-semibold flex items-center justify-center mx-auto mb-5">1</div>
+        <h3 class="serif text-xl font-semibold text-stone-900 mb-2">Design</h3>
+        <p class="text-stone-500 text-sm leading-relaxed">Choose your dot style, colors, and upload your logo. Preview updates in real time.</p>
+      </div>
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-full border-2 border-red-600 text-red-600 serif text-xl font-semibold flex items-center justify-center mx-auto mb-5">2</div>
+        <h3 class="serif text-xl font-semibold text-stone-900 mb-2">Generate</h3>
+        <p class="text-stone-500 text-sm leading-relaxed">Get your unique, scannable QR code instantly. Download in any format you need.</p>
+      </div>
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-full border-2 border-red-600 text-red-600 serif text-xl font-semibold flex items-center justify-center mx-auto mb-5">3</div>
+        <h3 class="serif text-xl font-semibold text-stone-900 mb-2">Track</h3>
+        <p class="text-stone-500 text-sm leading-relaxed">Watch scans roll in with real-time analytics. Update your destination link anytime.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="py-24 bg-white">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-14 reveal">
+      <h2 class="serif text-4xl lg:text-5xl font-semibold text-stone-900 mb-3">Simple Pricing</h2>
+      <p class="text-stone-500 text-lg">Start free. Upgrade when you need more.</p>
+    </div>
+    <div class="grid sm:grid-cols-3 gap-6 reveal" style="transition-delay:.1s">
+      <div class="rounded-2xl border border-stone-200 p-8">
+        <h3 class="serif text-2xl font-semibold text-stone-900 mb-1">Free</h3>
+        <p class="text-stone-400 text-sm mb-6">Get started, no card needed.</p>
+        <p class="text-4xl font-semibold text-stone-900 mb-8">$0</p>
+        <ul class="space-y-3 text-sm text-stone-500 mb-8">
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-stone-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>5 static QR codes</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-stone-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Basic customization</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-stone-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>PNG download</li>
+        </ul>
+        <a href="#" class="block text-center border border-stone-300 hover:border-stone-700 text-stone-700 py-3 rounded-full text-sm font-medium transition-colors">Get Started Free</a>
+      </div>
+      <div class="rounded-2xl border-2 border-red-600 p-8 relative shadow-lg">
+        <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-red-600 text-white text-xs font-semibold px-4 py-1 rounded-full whitespace-nowrap">Most Popular</div>
+        <h3 class="serif text-2xl font-semibold text-stone-900 mb-1">Pro</h3>
+        <p class="text-stone-400 text-sm mb-6">For professionals who need more.</p>
+        <p class="text-4xl font-semibold text-stone-900 mb-8">$9<span class="text-base font-normal text-stone-400">/mo</span></p>
+        <ul class="space-y-3 text-sm text-stone-600 mb-8">
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-red-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Unlimited dynamic QR codes</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-red-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Full scan analytics</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-red-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Premium custom design</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-red-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>SVG &amp; PDF export</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-red-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Short link manager</li>
+        </ul>
+        <a href="#" class="block text-center bg-red-600 hover:bg-red-700 text-white py-3 rounded-full text-sm font-medium transition-colors">Start Pro Trial</a>
+      </div>
+      <div class="rounded-2xl border border-stone-200 p-8">
+        <h3 class="serif text-2xl font-semibold text-stone-900 mb-1">Business</h3>
+        <p class="text-stone-400 text-sm mb-6">For teams and high volume.</p>
+        <p class="text-4xl font-semibold text-stone-900 mb-8">$29<span class="text-base font-normal text-stone-400">/mo</span></p>
+        <ul class="space-y-3 text-sm text-stone-500 mb-8">
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-stone-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Everything in Pro</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-stone-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Team access (5 seats)</li>
+          <li class="flex items-center gap-2"><svg class="w-4 h-4 text-stone-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>API access &amp; white-label</li>
+        </ul>
+        <a href="#" class="block text-center border border-stone-300 hover:border-stone-700 text-stone-700 py-3 rounded-full text-sm font-medium transition-colors">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="py-28 bg-stone-900 text-white text-center relative overflow-hidden dots">
+  <div class="relative z-10 reveal max-w-2xl mx-auto px-6">
+    <h2 class="serif text-5xl lg:text-6xl font-semibold mb-5">Ready to upgrade<br>your QR codes?</h2>
+    <p class="text-stone-400 text-lg mb-10">Create your first custom QR code in seconds and make every impression count.</p>
+    <a href="#pricing" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-medium text-lg transition-colors shadow-md">
+      Start for Free
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+    </a>
+    <p class="text-stone-500 text-sm mt-4">No credit card required</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="py-10 border-t border-stone-100 bg-stone-50">
+  <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <span class="serif text-xl font-semibold text-stone-800">QRForge.</span>
+    <div class="flex gap-7 text-sm text-stone-400">
+      <a href="#features"     class="hover:text-red-600 transition-colors">Features</a>
+      <a href="#pricing"      class="hover:text-red-600 transition-colors">Pricing</a>
+      <a href="#"             class="hover:text-red-600 transition-colors">Blog</a>
+      <a href="#"             class="hover:text-red-600 transition-colors">Contact</a>
+    </div>
+    <p class="text-xs text-stone-400">&copy; 2025 QRForge. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+  // Reveal on scroll
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // QR cycling synced to 2.4s scan animation
+  const qrs = ['qr-sample.jpg','qr1.jpg','qr2.jpg','qr3.jpg','qr4.jpg','qr5.jpg'];
+  let idx = 0;
+  const img = document.getElementById('hero-qr');
+  setInterval(() => {
+    idx = (idx + 1) % qrs.length;
+    img.style.opacity = '0';
+    img.style.transform = 'scale(.97)';
+    setTimeout(() => { img.src = qrs[idx]; img.style.opacity = '1'; img.style.transform = 'scale(1)'; }, 320);
+  }, 2400);
+
+  // Animate chart on scroll
+  const chartCard = document.getElementById('chart-card');
+  const chartObs = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) { document.getElementById('chartPath').classList.add('animate'); chartObs.disconnect(); }
+  }, { threshold: 0.4 });
+  chartObs.observe(chartCard);
+</script>
+</body>
+</html>
